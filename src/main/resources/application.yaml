@@ -1,0 +1,28 @@
+spring:
+  batch:
+    jdbc:
+      initialize-schema: always # ?? ??? ??? ?? - always: ?? ??? (??? ??, ??? ??), embedded: ?? ?????? ?? ? ???, never: ????? ??
+      schema: classpath:org/springframework/batch/core/schema-mysql.sql # ?? ??? ?? ???? - org.springframework.batch.core.schema-mysql.sql
+    job:
+      enabled: false # ?? ?? ?? ?? - ??????? ??? ? ??? ???? ??? ?? ??
+
+  datasource-meta:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/batch_meta?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+  datasource-data:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/batch_data?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show-sql: false
+        default_batch_fetch_size: 100 # JPA OneToMany ?? ?? ??
+    open-in-view: false
