@@ -24,5 +24,10 @@ spring:
       hibernate:
         format_sql: true
         show-sql: false
-        default_batch_fetch_size: 100 # JPA OneToMany ?? ?? ??
+        default_batch_fetch_size: 100
     open-in-view: false
+
+logging:
+  level:
+    root: info
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

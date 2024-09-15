@@ -69,3 +69,60 @@ spring:
 - JobLauncher: Job을 실행하는 인터페이스
 - JobRegistry: Job을 등록하고 조회하는 인터페이스
 
+#### 방법1: 요청을 Handler로 받아서 실행하는 방법
+
+```java
+@RestController
+@RequiredArgsConstructor
+public class MainController {
+
+    private final JobLauncher jobLauncher;
+    private final JobRegistry jobRegistry;
+
+    @GetMapping("/api/first")
+    public String first(
+            @RequestParam String value
+    ) throws NoSuchJobException,
+            JobInstanceAlreadyCompleteException,
+            JobExecutionAlreadyRunningException,
+            JobParametersInvalidException,
+            JobRestartException
+    {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("date", value)
+                .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("firstJob"), jobParameters);
+        
+        return "ok";
+    }
+
+}
+```
+
+#### 방법2: 스케줄러를 통해 주기적으로 실행하는 방법
+
+```java
+@Configuration
+@RequiredArgsConstructor
+public class FirstSchedule {
+
+    private final JobLauncher jobLauncher;
+    private final JobRegistry jobRegistry;
+
+    @Scheduled(cron = "10 * * * * *", zone = "Asia/Seoul")
+    public void runFirstJob() throws NoSuchJobException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+
+        System.out.println("first schedule start");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+        String date = dateFormat.format(new Date());
+
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("date", date)
+                .toJobParameters();
+
+        jobLauncher.run(jobRegistry.getJob("firstJob"), jobParameters);
+    }
+}
+```

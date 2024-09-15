@@ -60,6 +60,19 @@ public class FirstBatch {
      * 실제 쿼리가 어떻게 나가는지 확인
      * findAll + order by DESC + limit 10 으로 나가는건가,,!?
      * 아니면 List<BeforeEntity> findAll() 이렇게 나가는건가,,!?
+     *
+     * select be1_0.id,be1_0.username from BeforeEntity be1_0 order by be1_0.id limit ?,?
+     * select count(be1_0.id) from BeforeEntity be1_0
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
+     * insert into AfterEntity (username) values (?)
      */
     @Bean
     public ItemReader<BeforeEntity> beforeReader() {
