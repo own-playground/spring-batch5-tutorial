@@ -17,7 +17,7 @@
 
 ### 스프링 배치 모식도
 
-![img.png](img.png)
+![img.png](archives/img.png)
 
 - JobRepository: Job과 Step의 메타데이터를 저장하는 레포지토리
 
@@ -126,3 +126,47 @@ public class FirstSchedule {
     }
 }
 ```
+
+### (3) 데이터 업데이트 - 동일 테이블 내 컬럼값을 읽어서 조건에 따라 업데이트
+```java
+@Bean
+public Step secondStep() {
+
+    return new StepBuilder("secondStep", jobRepository)
+            .<WinEntity, WinEntity> chunk(10, platformTransactionManager)
+            .reader(winReader())
+            .processor(trueProcessor())
+            .writer(winWriter())
+            .build();
+}
+
+@Bean
+public RepositoryItemReader<WinEntity> winReader() {
+
+    return new RepositoryItemReaderBuilder<WinEntity>()
+            .name("winReader")
+            .repository(winRepository)
+            .methodName("findByWinGreaterThanEqual")
+            .arguments(Collections.singletonList(10L))
+            .sorts(Map.of("id", Sort.Direction.ASC))
+            .pageSize(10)
+            .build();
+}
+
+@Bean
+public ItemProcessor<WinEntity, WinEntity> trueProcessor() {
+    return item -> {
+        item.setReward(true);
+        return item;
+    };
+}
+
+@Bean
+public RepositoryItemWriter<WinEntity> winWriter() {
+    return new RepositoryItemWriterBuilder<WinEntity>()
+            .repository(winRepository)
+            .methodName("save")
+            .build();
+}
+```
+
