@@ -57,4 +57,21 @@ public class MainController {
         return "ok";
     }
 
+    @GetMapping("/api/fourth")
+    public String fourth(
+            @RequestParam String value
+    ) throws NoSuchJobException,
+            JobInstanceAlreadyCompleteException,
+            JobExecutionAlreadyRunningException,
+            JobParametersInvalidException,
+            JobRestartException
+    {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("date", value)
+                .toJobParameters();
+        jobLauncher.run(jobRegistry.getJob("fourthJob"), jobParameters);
+
+        return "ok";
+    }
+
 }

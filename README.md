@@ -170,3 +170,48 @@ public RepositoryItemWriter<WinEntity> winWriter() {
 }
 ```
 
+### (4) 영속성별 구현 방법
+
+MongoDB, JPA, JDBC 등 영속성에 따라 구현 방법이 다름
+
+- JDBC
+  - reader
+    - Cursor: 데이터베이스 자체의 cursor를 사용하여 전체 테이블에서 cursor가 한 칸씩 이동하며 데이터를 가져옴
+    - Paging: 데이터 테이블에서 묶음 단위로 데이터를 가져오는 방식으로 SQL 구문 생성시 offset과 limit를 배치단에서 자동으로 조합하여 쿼리를 실행함
+    - https://docs.spring.io/spring-batch/reference/readers-and-writers/database.html
+
+```java
+@Bean
+public JdbcCursorItemReader<CustomerCredit> itemReader(DataSource dataSource) {
+    String sql = "select ID, NAME, CREDIT from CUSTOMER";
+    return new JdbcCursorItemReaderBuilder<CustomerCredit>().name("customerReader")
+            .dataSource(dataSource)
+            .sql(sql)
+            .rowMapper(new CustomerCreditRowMapper())
+            .build();
+}
+```
+
+```java
+// Paging
+@Bean
+@StepScope
+public JdbcPagingItemReader<CustomerCredit> itemReader(DataSource dataSource,
+@Value("#{jobParameters['credit']}") Double credit) {
+        Map<String, Object> parameterValues = new HashMap<>();
+        parameterValues.put("statusCode", "PE");
+        parameterValues.put("credit", credit);
+        parameterValues.put("type", "COLLECTION");
+
+        return new JdbcPagingItemReaderBuilder<CustomerCredit>().name("customerReader")
+                .dataSource(dataSource)
+                .selectClause("select NAME, ID, CREDIT")
+                .fromClause("FROM CUSTOMER")
+                .whereClause("WHERE CREDIT > :credit")
+                .sortKeys(Map.of("ID", Order.ASCENDING))
+                .rowMapper(new CustomerCreditRowMapper())
+                .pageSize(2)
+                .parameterValues(parameterValues)
+                .build();
+}
+```

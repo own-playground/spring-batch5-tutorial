@@ -31,4 +31,10 @@ public class AfterEntity {
                 .username(item.getUsername())
                 .build();
     }
+
+    public static AfterEntity created(final String stringCellValue) {
+        return AfterEntity.builder()
+                .username(stringCellValue)
+                .build();
+    }
 }

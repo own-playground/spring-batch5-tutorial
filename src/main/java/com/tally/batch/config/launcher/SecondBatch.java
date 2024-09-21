@@ -9,8 +9,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.data.RepositoryItemReader;
-import org.springframework.batch.item.data.RepositoryItemWriter;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.batch.item.data.builder.RepositoryItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
@@ -52,8 +52,7 @@ public class SecondBatch {
     }
 
     @Bean
-    public RepositoryItemReader<WinEntity> winReader() {
-
+    public ItemReader<WinEntity> winReader() {
         return new RepositoryItemReaderBuilder<WinEntity>()
                 .name("winReader")
                 .repository(winRepository)
@@ -73,7 +72,7 @@ public class SecondBatch {
     }
 
     @Bean
-    public RepositoryItemWriter<WinEntity> winWriter() {
+    public ItemWriter<WinEntity> winWriter() {
         return new RepositoryItemWriterBuilder<WinEntity>()
                 .repository(winRepository)
                 .methodName("save")

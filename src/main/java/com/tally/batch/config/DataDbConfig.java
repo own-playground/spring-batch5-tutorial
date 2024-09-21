@@ -35,7 +35,7 @@ public class DataDbConfig {
 
         em.setDataSource(dataDBSource());
         em.setPackagesToScan("com.tally.batch.entity");
-        em. setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.hbm2ddl.auto", "update");
